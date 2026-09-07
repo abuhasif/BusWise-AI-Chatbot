@@ -1,16 +1,24 @@
 param(
- [string]$Python = 'C:/Users/Lenovo/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe',
- [string]$Ollama = "$PSScriptRoot/runtime/ollama/ollama.exe",
- [string]$Models = "$PSScriptRoot/runtime/ollama-models"
+ [string]$Python = '',
+ [string]$Ollama = '',
+ [string]$Models = ''
 )
 $ErrorActionPreference='Stop'
 Set-Location -LiteralPath $PSScriptRoot
+$bundledOllama = Join-Path $PSScriptRoot 'runtime/ollama/ollama.exe'
+$bundledModels = Join-Path $PSScriptRoot 'runtime/ollama-models'
+if (!$Python) { $Python = (Get-Command python.exe -ErrorAction Stop).Source }
+if (!$Ollama) {
+ if (Test-Path -LiteralPath $bundledOllama) { $Ollama = $bundledOllama }
+ else { $Ollama = (Get-Command ollama.exe -ErrorAction Stop).Source }
+}
+if (!$Models -and (Test-Path -LiteralPath $bundledModels)) { $Models = $bundledModels }
 New-Item -ItemType Directory -Force -Path "$PSScriptRoot/data" | Out-Null
 if (!(Test-Path -LiteralPath "$PSScriptRoot/data/bus.db")) { throw 'Import the authorised workbook first. See README.md.' }
 $started=@()
 function PortUsed($port) { return [bool](Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) }
 if (!(PortUsed 11434)) {
- $env:OLLAMA_MODELS=(Resolve-Path -LiteralPath $Models).Path
+ if ($Models) { $env:OLLAMA_MODELS=(Resolve-Path -LiteralPath $Models).Path }
  $env:OLLAMA_HOST='127.0.0.1:11434'
  $env:OLLAMA_CONTEXT_LENGTH='8192'
  $proc=Start-Process -FilePath $Ollama -ArgumentList 'serve' -WindowStyle Hidden -PassThru -RedirectStandardOutput "$PSScriptRoot/data/model.out.log" -RedirectStandardError "$PSScriptRoot/data/model.err.log"

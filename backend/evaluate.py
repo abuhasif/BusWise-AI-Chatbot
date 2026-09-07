@@ -22,6 +22,6 @@ for question,context,intent,expected in cases:
  ok=result['context'].get('intent')==intent and expected in serialized
  results.append({'question':question,'passed':ok,'seconds':round(time.monotonic()-start,2),'result':result})
  print(('PASS' if ok else 'FAIL'),question,flush=True)
-out=Path(__file__).resolve().parents[1]/'evaluation';out.mkdir(exist_ok=True)
+out=Path(__file__).resolve().parents[1]/'docs'/'evaluation';out.mkdir(parents=True,exist_ok=True)
 (out/'live-results.json').write_text(json.dumps(results,indent=2),encoding='utf-8')
 print(f'{sum(x["passed"] for x in results)}/{len(results)} passed')

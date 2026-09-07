@@ -48,5 +48,5 @@ data/processes.json
 # Local Ollama runtime and downloaded Qwen model are intentionally not pushed.
 runtime/
 backend/__pycache__/
-evaluation/*results.json
+docs/evaluation/*results.json
 *.log

@@ -40,4 +40,4 @@ for label,q,ctx,intent in cases:
     for a,b in zip(legs,legs[1:]):valid=valid and a['to']==b['from']
  item={'case':label,'question':q,'intent_match':p.get('intent')==intent,'route_facts_valid':valid,'seconds':round(time.monotonic()-start,1),'reply':reply,'map':mapped};results.append(item)
  print(json.dumps({'case':label,'intent':p.get('intent'),'valid':valid,'answer':(mapped or reply).get('error') or (mapped or reply).get('notice') or reply.get('answer'),'routes':[r['label'] for r in (mapped or {}).get('routes',[])],'cards':reply.get('cards') if intent=='times' else None}),flush=True)
-Path('evaluation/common-questions.json').write_text(json.dumps(results,indent=2),encoding='utf-8')
+Path('docs/evaluation/common-questions.json').write_text(json.dumps(results,indent=2),encoding='utf-8')

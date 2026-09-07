@@ -58,5 +58,5 @@ for i,(label,question,parent) in enumerate(cases,1):
    checks['timetable_matches_snapshot']=all(valid)
   if i==7:checks['services_match_snapshot']=set(chat['cards'][0]['Services'].split(', '))=={r[0] for r in c.execute("SELECT DISTINCT service FROM routes WHERE stop='66009'")}
  item={'id':i,'scenario':label,'question':question,'follows':parent,'input_context':context,'seconds':round(time.monotonic()-started,2),'chat':chat,'journey':journey,'checks':checks};results.append(item)
- Path('evaluation/qwen-25-results.json').write_text(json.dumps(results,indent=2),encoding='utf-8')
+ Path('docs/evaluation/qwen-25-results.json').write_text(json.dumps(results,indent=2),encoding='utf-8')
  print(json.dumps({'id':i,'scenario':label,'mode':chat.get('mode'),'context':p,'answer':chat.get('answer'),'source':(journey or {}).get('source'),'error':(journey or {}).get('error'),'routes':[{k:r[k] for k in ('label','minutes') if k in r} for r in (journey or {}).get('routes',[])],'checks':checks,'seconds':item['seconds']}),flush=True)
