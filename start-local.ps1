@@ -1,7 +1,7 @@
 param(
  [string]$Python = 'C:/Users/Lenovo/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe',
- [string]$Ollama = "$PSScriptRoot/../tmp/resume/ollama/ollama.exe",
- [string]$Models = "$PSScriptRoot/../tmp/resume/ollama-models"
+ [string]$Ollama = "$PSScriptRoot/runtime/ollama/ollama.exe",
+ [string]$Models = "$PSScriptRoot/runtime/ollama-models"
 )
 $ErrorActionPreference='Stop'
 Set-Location -LiteralPath $PSScriptRoot

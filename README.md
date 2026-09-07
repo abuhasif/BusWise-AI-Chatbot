@@ -4,7 +4,7 @@ A local conversational bus-route assistant using React, Python, SQLite and Qwen3
 
 ## Run locally
 
-Run `.\start-local.ps1` in PowerShell from this project. Open http://127.0.0.1:3000. Use `.\stop-local.ps1` to stop only services launched by that script. The initial build uses the installed Codex Python runtime and portable Ollama already downloaded in the parent workspace; the script accepts alternate paths for portability.
+Run `.\start-local.ps1` in PowerShell from this project. Open http://127.0.0.1:3000. Use `.\stop-local.ps1` to stop only services launched by that script. The self-contained local copy stores its Ollama runtime and Qwen model under `runtime/`; the script accepts alternate paths for portability.
 
 ## Clone and run on another computer
 
