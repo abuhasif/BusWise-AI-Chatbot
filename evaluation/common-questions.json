@@ -1,0 +1,1737 @@
+[
+  {
+    "case": "Direct route",
+    "question": "How do I get from Woodlands Int to Hougang Int?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 6.8,
+    "reply": {
+      "answer": "Found 1 direct option(s) in the January 2026 snapshot. Options are ordered by stop count, not travel time. Station matches use the supplied boarding/alighting mappings. Boarding and alighting stops are shown below; these are specific stops, not all locations within the named towns.",
+      "cards": [
+        {
+          "Service": "161",
+          "Board": "46009 \u00b7 Woodlands Int",
+          "Alight": "64009 \u00b7 Hougang Ctrl Int",
+          "Stops along route": 23
+        }
+      ],
+      "context": {
+        "intent": "route",
+        "origin": "Woodlands Int",
+        "destination": "Hougang Int"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": {
+      "origin": {
+        "name": "Woodlands Int",
+        "point": [
+          1.436849,
+          103.785737
+        ]
+      },
+      "destination": {
+        "name": "Hougang Ctrl Int",
+        "point": [
+          1.37060695394614,
+          103.8926680887468
+        ]
+      },
+      "routes": [
+        {
+          "label": "Bus 161",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "161",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "64009 \u00b7 Hougang Ctrl Int",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.39504382175966,
+                  103.9023682485853
+                ],
+                [
+                  1.39269,
+                  103.901269
+                ],
+                [
+                  1.39102885574104,
+                  103.8999866981355
+                ],
+                [
+                  1.392423,
+                  103.896122
+                ],
+                [
+                  1.392382,
+                  103.893479
+                ],
+                [
+                  1.38825138740075,
+                  103.8920895574449
+                ],
+                [
+                  1.38575273465234,
+                  103.8912152870564
+                ],
+                [
+                  1.383046111,
+                  103.889605833017
+                ],
+                [
+                  1.38133333296872,
+                  103.888214999993
+                ],
+                [
+                  1.37938472998807,
+                  103.8864030920165
+                ],
+                [
+                  1.37809338718149,
+                  103.8846802711466
+                ],
+                [
+                  1.37595638900393,
+                  103.884701388976
+                ],
+                [
+                  1.37339164793235,
+                  103.8852185485937
+                ],
+                [
+                  1.3729130421635,
+                  103.8863375074799
+                ],
+                [
+                  1.374811,
+                  103.888082
+                ],
+                [
+                  1.37634509209583,
+                  103.8905489444585
+                ],
+                [
+                  1.37447444021165,
+                  103.892894273561
+                ],
+                [
+                  1.37288245131287,
+                  103.8917038496259
+                ],
+                [
+                  1.37145414929063,
+                  103.8897657394618
+                ],
+                [
+                  1.37060695394614,
+                  103.8926680887468
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "January 2026 database",
+      "notice": "OneMap routing is not connected. Using the January 2026 database. Checked direct buses and one transfer at the same stop. Ranked by stop count; connection times are not checked. Dashed lines join stops; they are not road or walking directions. "
+    },
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Transfer route",
+    "question": "How do I get from Woodlands to Pasir Ris?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 1.5,
+    "reply": {
+      "answer": "No direct route was found in this filtered snapshot. This does not mean no journey exists; transfers and omitted services are not searched.",
+      "cards": [],
+      "context": {
+        "intent": "route",
+        "origin": "Woodlands",
+        "destination": "Pasir Ris"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": {
+      "origin": {
+        "name": "Woodlands Int",
+        "point": [
+          1.436849,
+          103.785737
+        ]
+      },
+      "destination": {
+        "name": "Pasir Ris Int",
+        "point": [
+          1.373696,
+          103.94845
+        ]
+      },
+      "routes": [
+        {
+          "label": "Bus 168 \u2192 109",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "168",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "65199 \u00b7 Aft Punggol Rd",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.40222194447692,
+                  103.8713880555765
+                ],
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ]
+              ]
+            },
+            {
+              "mode": "BUS",
+              "service": "109",
+              "from": "65199 \u00b7 Aft Punggol Rd",
+              "to": "77039 \u00b7 Pasir Ris Stn Exit B",
+              "points": [
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ],
+                [
+                  1.3780301775267,
+                  103.9327865347595
+                ],
+                [
+                  1.37889759950996,
+                  103.9359653413393
+                ],
+                [
+                  1.37741830757924,
+                  103.9379320111752
+                ],
+                [
+                  1.37599439507295,
+                  103.939861116152
+                ],
+                [
+                  1.3744627816256,
+                  103.9418057812652
+                ],
+                [
+                  1.3737108000359,
+                  103.9435107999854
+                ],
+                [
+                  1.373014,
+                  103.945543
+                ],
+                [
+                  1.37241,
+                  103.948657
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Bus 168 \u2192 88",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "168",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "65199 \u00b7 Aft Punggol Rd",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.40222194447692,
+                  103.8713880555765
+                ],
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ]
+              ]
+            },
+            {
+              "mode": "BUS",
+              "service": "88",
+              "from": "65199 \u00b7 Aft Punggol Rd",
+              "to": "77009 \u00b7 Pasir Ris Int",
+              "points": [
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ],
+                [
+                  1.3780301775267,
+                  103.9327865347595
+                ],
+                [
+                  1.38079641020594,
+                  103.9346621770568
+                ],
+                [
+                  1.38289337444624,
+                  103.9357870042478
+                ],
+                [
+                  1.3827163599648,
+                  103.9385585573913
+                ],
+                [
+                  1.3805766269449,
+                  103.9406476680356
+                ],
+                [
+                  1.37902915784394,
+                  103.9427159123835
+                ],
+                [
+                  1.376671,
+                  103.94637
+                ],
+                [
+                  1.373696,
+                  103.94845
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Bus 168 \u2192 89",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "168",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "65199 \u00b7 Aft Punggol Rd",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.40222194447692,
+                  103.8713880555765
+                ],
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ]
+              ]
+            },
+            {
+              "mode": "BUS",
+              "service": "89",
+              "from": "65199 \u00b7 Aft Punggol Rd",
+              "to": "77039 \u00b7 Pasir Ris Stn Exit B",
+              "points": [
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ],
+                [
+                  1.3780301775267,
+                  103.9327865347595
+                ],
+                [
+                  1.37889759950996,
+                  103.9359653413393
+                ],
+                [
+                  1.37741830757924,
+                  103.9379320111752
+                ],
+                [
+                  1.37599439507295,
+                  103.939861116152
+                ],
+                [
+                  1.3744627816256,
+                  103.9418057812652
+                ],
+                [
+                  1.3737108000359,
+                  103.9435107999854
+                ],
+                [
+                  1.373014,
+                  103.945543
+                ],
+                [
+                  1.37241,
+                  103.948657
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "January 2026 database",
+      "notice": "OneMap routing is not connected. Using the January 2026 database. Checked direct buses and one transfer at the same stop. Ranked by stop count; connection times are not checked. Dashed lines join stops; they are not road or walking directions. "
+    },
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Natural wording",
+    "question": "I am at Serangoon and want to reach Bartley. Which bus can I take?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.4,
+    "reply": {
+      "answer": "Found 1 direct option(s) in the January 2026 snapshot. Options are ordered by stop count, not travel time. Station matches use the supplied boarding/alighting mappings. Boarding and alighting stops are shown below; these are specific stops, not all locations within the named towns.",
+      "cards": [
+        {
+          "Service": "158",
+          "Board": "66009 \u00b7 Serangoon Int",
+          "Alight": "62079 \u00b7 Aft Bartley Stn Exit B",
+          "Stops along route": 6
+        }
+      ],
+      "context": {
+        "intent": "route",
+        "origin": "Serangoon",
+        "destination": "Bartley"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": {
+      "origin": {
+        "name": "S'Goon Stn Exit B",
+        "point": [
+          1.3489790064228,
+          103.872774327976
+        ]
+      },
+      "destination": {
+        "name": "Bartley Stn Exit A",
+        "point": [
+          1.34252980960729,
+          103.8800289273267
+        ]
+      },
+      "routes": [
+        {
+          "label": "Bus 158",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "158",
+              "from": "66009 \u00b7 Serangoon Int",
+              "to": "62079 \u00b7 Aft Bartley Stn Exit B",
+              "points": [
+                [
+                  1.35046610176969,
+                  103.8716899226462
+                ],
+                [
+                  1.348559,
+                  103.874826
+                ],
+                [
+                  1.34763166701234,
+                  103.8764688890183
+                ],
+                [
+                  1.34592441628878,
+                  103.8776519633928
+                ],
+                [
+                  1.34383983323818,
+                  103.8782509427123
+                ],
+                [
+                  1.34296635529936,
+                  103.8797664642475
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "January 2026 database",
+      "notice": "OneMap routing is not connected. Using the January 2026 database. Checked direct buses and one transfer at the same stop. Ranked by stop count; connection times are not checked. Dashed lines join stops; they are not road or walking directions. "
+    },
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Stop services",
+    "question": "Which buses serve stop 66009?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.4,
+    "reply": {
+      "answer": "These services are listed at your stop in the January 2026 snapshot.",
+      "cards": [
+        {
+          "Stop": "66009 \u00b7 Serangoon Int",
+          "Services": "100, 101, 103, 105, 109, 158, 315, 317, 506"
+        }
+      ],
+      "context": {
+        "intent": "stop",
+        "stop": "66009"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "services_verified": true,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Last bus",
+    "question": "Last bus 168 at Woodlands Int",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.6,
+    "reply": {
+      "answer": "Recorded weekday boarding times, not live arrivals. Terminating-only route entries are excluded. Times beyond 24:00 refer to after midnight.",
+      "cards": [
+        {
+          "Service": "168",
+          "Stop": "46009 \u00b7 Woodlands Int",
+          "Towards": "Bedok Int",
+          "First bus": "05:30",
+          "Last bus": "23:30"
+        }
+      ],
+      "context": {
+        "intent": "times",
+        "service": "168",
+        "stop": "woodlands int"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "timetable_verified": true,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Missing boarding stop",
+    "question": "last bus 168",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.3,
+    "reply": {
+      "answer": "Where are you boarding service 168? A stop name such as Woodlands Int is enough. You can also specify weekday, Saturday or Sunday.",
+      "cards": [],
+      "context": {
+        "intent": "times",
+        "service": "168"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "timetable_verified": true,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Stop clarification",
+    "question": "168 woodlands int",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.5,
+    "reply": {
+      "answer": "Recorded weekday boarding times, not live arrivals. Terminating-only route entries are excluded. Times beyond 24:00 refer to after midnight.",
+      "cards": [
+        {
+          "Service": "168",
+          "Stop": "46009 \u00b7 Woodlands Int",
+          "Towards": "Bedok Int",
+          "First bus": "05:30",
+          "Last bus": "23:30"
+        }
+      ],
+      "context": {
+        "intent": "times",
+        "service": "168",
+        "stop": "woodlands int"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "timetable_verified": true,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Day follow-up",
+    "question": "What about Sunday?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.6,
+    "reply": {
+      "answer": "Recorded Sunday boarding times, not live arrivals. Terminating-only route entries are excluded. Times beyond 24:00 refer to after midnight.",
+      "cards": [
+        {
+          "Service": "168",
+          "Stop": "46009 \u00b7 Woodlands Int",
+          "Towards": "Bedok Int",
+          "First bus": "05:45",
+          "Last bus": "23:30"
+        }
+      ],
+      "context": {
+        "intent": "times",
+        "service": "168",
+        "stop": "Woodlands Int",
+        "day": "sun"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "timetable_verified": true,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Destination follow-up",
+    "question": "What about Hougang?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.8,
+    "reply": {
+      "answer": "Found 2 direct option(s) in the January 2026 snapshot. Options are ordered by stop count, not travel time. Station matches use the supplied boarding/alighting mappings. Boarding and alighting stops are shown below; these are specific stops, not all locations within the named towns.",
+      "cards": [
+        {
+          "Service": "161",
+          "Board": "46009 \u00b7 Woodlands Int",
+          "Alight": "64381 \u00b7 Hougang Stn Exit C",
+          "Stops along route": 21
+        },
+        {
+          "Service": "161",
+          "Board": "46009 \u00b7 Woodlands Int",
+          "Alight": "64009 \u00b7 Hougang Ctrl Int",
+          "Stops along route": 23
+        }
+      ],
+      "context": {
+        "intent": "route",
+        "origin": "Woodlands Int",
+        "destination": "Hougang"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": {
+      "origin": {
+        "name": "Woodlands Int",
+        "point": [
+          1.436849,
+          103.785737
+        ]
+      },
+      "destination": {
+        "name": "Hougang Ctrl Int",
+        "point": [
+          1.37060695394614,
+          103.8926680887468
+        ]
+      },
+      "routes": [
+        {
+          "label": "Bus 161",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "161",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "64381 \u00b7 Hougang Stn Exit C",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.39504382175966,
+                  103.9023682485853
+                ],
+                [
+                  1.39269,
+                  103.901269
+                ],
+                [
+                  1.39102885574104,
+                  103.8999866981355
+                ],
+                [
+                  1.392423,
+                  103.896122
+                ],
+                [
+                  1.392382,
+                  103.893479
+                ],
+                [
+                  1.38825138740075,
+                  103.8920895574449
+                ],
+                [
+                  1.38575273465234,
+                  103.8912152870564
+                ],
+                [
+                  1.383046111,
+                  103.889605833017
+                ],
+                [
+                  1.38133333296872,
+                  103.888214999993
+                ],
+                [
+                  1.37938472998807,
+                  103.8864030920165
+                ],
+                [
+                  1.37809338718149,
+                  103.8846802711466
+                ],
+                [
+                  1.37595638900393,
+                  103.884701388976
+                ],
+                [
+                  1.37339164793235,
+                  103.8852185485937
+                ],
+                [
+                  1.3729130421635,
+                  103.8863375074799
+                ],
+                [
+                  1.374811,
+                  103.888082
+                ],
+                [
+                  1.37634509209583,
+                  103.8905489444585
+                ],
+                [
+                  1.37447444021165,
+                  103.892894273561
+                ],
+                [
+                  1.37288245131287,
+                  103.8917038496259
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Bus 161",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "161",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "64009 \u00b7 Hougang Ctrl Int",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.39504382175966,
+                  103.9023682485853
+                ],
+                [
+                  1.39269,
+                  103.901269
+                ],
+                [
+                  1.39102885574104,
+                  103.8999866981355
+                ],
+                [
+                  1.392423,
+                  103.896122
+                ],
+                [
+                  1.392382,
+                  103.893479
+                ],
+                [
+                  1.38825138740075,
+                  103.8920895574449
+                ],
+                [
+                  1.38575273465234,
+                  103.8912152870564
+                ],
+                [
+                  1.383046111,
+                  103.889605833017
+                ],
+                [
+                  1.38133333296872,
+                  103.888214999993
+                ],
+                [
+                  1.37938472998807,
+                  103.8864030920165
+                ],
+                [
+                  1.37809338718149,
+                  103.8846802711466
+                ],
+                [
+                  1.37595638900393,
+                  103.884701388976
+                ],
+                [
+                  1.37339164793235,
+                  103.8852185485937
+                ],
+                [
+                  1.3729130421635,
+                  103.8863375074799
+                ],
+                [
+                  1.374811,
+                  103.888082
+                ],
+                [
+                  1.37634509209583,
+                  103.8905489444585
+                ],
+                [
+                  1.37447444021165,
+                  103.892894273561
+                ],
+                [
+                  1.37288245131287,
+                  103.8917038496259
+                ],
+                [
+                  1.37145414929063,
+                  103.8897657394618
+                ],
+                [
+                  1.37060695394614,
+                  103.8926680887468
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "January 2026 database",
+      "notice": "OneMap routing is not connected. Using the January 2026 database. Checked direct buses and one transfer at the same stop. Ranked by stop count; connection times are not checked. Dashed lines join stops; they are not road or walking directions. "
+    },
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Reverse journey",
+    "question": "Opposite direction",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 1.2,
+    "reply": {
+      "answer": "Found 1 direct option(s) in the January 2026 snapshot. Options are ordered by stop count, not travel time. Station matches use the supplied boarding/alighting mappings. Boarding and alighting stops are shown below; these are specific stops, not all locations within the named towns.",
+      "cards": [
+        {
+          "Service": "161",
+          "Board": "64009 \u00b7 Hougang Ctrl Int",
+          "Alight": "46009 \u00b7 Woodlands Int",
+          "Stops along route": 22
+        }
+      ],
+      "context": {
+        "intent": "route",
+        "origin": "Hougang Int",
+        "destination": "Woodlands Int"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": {
+      "origin": {
+        "name": "Hougang Ctrl Int",
+        "point": [
+          1.37060695394614,
+          103.8926680887468
+        ]
+      },
+      "destination": {
+        "name": "Woodlands Int",
+        "point": [
+          1.436849,
+          103.785737
+        ]
+      },
+      "routes": [
+        {
+          "label": "Bus 161",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "161",
+              "from": "64009 \u00b7 Hougang Ctrl Int",
+              "to": "46009 \u00b7 Woodlands Int",
+              "points": [
+                [
+                  1.37060695394614,
+                  103.8926680887468
+                ],
+                [
+                  1.371948,
+                  103.890003
+                ],
+                [
+                  1.37313809346006,
+                  103.8915681838848
+                ],
+                [
+                  1.37468500843171,
+                  103.8926630612946
+                ],
+                [
+                  1.376302,
+                  103.891097
+                ],
+                [
+                  1.37528677811119,
+                  103.8891876077644
+                ],
+                [
+                  1.37291834719604,
+                  103.8867398285799
+                ],
+                [
+                  1.37353273194871,
+                  103.8850340620006
+                ],
+                [
+                  1.37548640364406,
+                  103.8845866729986
+                ],
+                [
+                  1.37837333826782,
+                  103.8844592300308
+                ],
+                [
+                  1.3795683329839,
+                  103.8857647220324
+                ],
+                [
+                  1.38153999996628,
+                  103.8880563890011
+                ],
+                [
+                  1.38288638899819,
+                  103.8891108330101
+                ],
+                [
+                  1.38533638989648,
+                  103.8907421565758
+                ],
+                [
+                  1.3882215,
+                  103.891787
+                ],
+                [
+                  1.39203289077574,
+                  103.8930711500473
+                ],
+                [
+                  1.39290842289238,
+                  103.8953173845628
+                ],
+                [
+                  1.39143144034973,
+                  103.8995695353839
+                ],
+                [
+                  1.39490129020977,
+                  103.9018594759131
+                ],
+                [
+                  1.43013056874728,
+                  103.7870686858351
+                ],
+                [
+                  1.43352632033198,
+                  103.7879831924694
+                ],
+                [
+                  1.43702205360453,
+                  103.7888491967875
+                ],
+                [
+                  1.436946,
+                  103.785936
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "January 2026 database",
+      "notice": "OneMap routing is not connected. Using the January 2026 database. Checked direct buses and one transfer at the same stop. Ranked by stop count; connection times are not checked. Dashed lines join stops; they are not road or walking directions. "
+    },
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "First bus",
+    "question": "First bus 161 at Woodlands Int on Saturday",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.6,
+    "reply": {
+      "answer": "Recorded Saturday boarding times, not live arrivals. Terminating-only route entries are excluded. Times beyond 24:00 refer to after midnight.",
+      "cards": [
+        {
+          "Service": "161",
+          "Stop": "46009 \u00b7 Woodlands Int",
+          "Towards": "Hougang Ctrl Int",
+          "First bus": "06:00",
+          "Last bus": "23:30"
+        }
+      ],
+      "context": {
+        "intent": "times",
+        "service": "161",
+        "day": "sat",
+        "stop": "woodlands int"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "timetable_verified": true,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Live arrivals",
+    "question": "When will the next bus 168 arrive?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.0,
+    "reply": {
+      "answer": "This snapshot cannot confirm live arrivals, current disruptions, fares, active free boarding, nearest walking routes or fastest journeys. I can look up direct routes, stop services and recorded first/last buses.",
+      "cards": [],
+      "context": {
+        "intent": "unsupported"
+      },
+      "mode": "rules",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Nearest stop",
+    "question": "What is the nearest bus stop to me?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.0,
+    "reply": {
+      "answer": "This snapshot cannot confirm live arrivals, current disruptions, fares, active free boarding, nearest walking routes or fastest journeys. I can look up direct routes, stop services and recorded first/last buses.",
+      "cards": [],
+      "context": {
+        "intent": "unsupported"
+      },
+      "mode": "rules",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "assessment": "PARTIAL: generic unsupported response instead of directing user to location controls."
+  },
+  {
+    "case": "Unknown place",
+    "question": "From Woodlands to Atlantis",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 1.3,
+    "reply": {
+      "answer": "I could not identify the destination. Use a five-digit bus stop code or a station name covered by the dataset.",
+      "cards": [],
+      "context": {
+        "intent": "route",
+        "origin": "Woodlands",
+        "destination": "Atlantis"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": {
+      "error": "Could not locate Atlantis. Try a full stop name or choose a map point."
+    },
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Unknown stop",
+    "question": "Which buses serve stop 99999?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.4,
+    "reply": {
+      "answer": "Which bus stop? Give a five-digit stop code, such as 66009.",
+      "cards": [],
+      "context": {
+        "intent": "stop",
+        "stop": "99999"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  },
+  {
+    "case": "Route time",
+    "question": "How long does it take from Woodlands to Hougang?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 1.1,
+    "reply": {
+      "answer": "Found 2 direct option(s) in the January 2026 snapshot. Options are ordered by stop count, not travel time. Station matches use the supplied boarding/alighting mappings. Boarding and alighting stops are shown below; these are specific stops, not all locations within the named towns.",
+      "cards": [
+        {
+          "Service": "161",
+          "Board": "46009 \u00b7 Woodlands Int",
+          "Alight": "64381 \u00b7 Hougang Stn Exit C",
+          "Stops along route": 21
+        },
+        {
+          "Service": "161",
+          "Board": "46009 \u00b7 Woodlands Int",
+          "Alight": "64009 \u00b7 Hougang Ctrl Int",
+          "Stops along route": 23
+        }
+      ],
+      "context": {
+        "intent": "route",
+        "origin": "Woodlands",
+        "destination": "Hougang"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": {
+      "origin": {
+        "name": "Woodlands Int",
+        "point": [
+          1.436849,
+          103.785737
+        ]
+      },
+      "destination": {
+        "name": "Hougang Ctrl Int",
+        "point": [
+          1.37060695394614,
+          103.8926680887468
+        ]
+      },
+      "routes": [
+        {
+          "label": "Bus 161",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "161",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "64381 \u00b7 Hougang Stn Exit C",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.39504382175966,
+                  103.9023682485853
+                ],
+                [
+                  1.39269,
+                  103.901269
+                ],
+                [
+                  1.39102885574104,
+                  103.8999866981355
+                ],
+                [
+                  1.392423,
+                  103.896122
+                ],
+                [
+                  1.392382,
+                  103.893479
+                ],
+                [
+                  1.38825138740075,
+                  103.8920895574449
+                ],
+                [
+                  1.38575273465234,
+                  103.8912152870564
+                ],
+                [
+                  1.383046111,
+                  103.889605833017
+                ],
+                [
+                  1.38133333296872,
+                  103.888214999993
+                ],
+                [
+                  1.37938472998807,
+                  103.8864030920165
+                ],
+                [
+                  1.37809338718149,
+                  103.8846802711466
+                ],
+                [
+                  1.37595638900393,
+                  103.884701388976
+                ],
+                [
+                  1.37339164793235,
+                  103.8852185485937
+                ],
+                [
+                  1.3729130421635,
+                  103.8863375074799
+                ],
+                [
+                  1.374811,
+                  103.888082
+                ],
+                [
+                  1.37634509209583,
+                  103.8905489444585
+                ],
+                [
+                  1.37447444021165,
+                  103.892894273561
+                ],
+                [
+                  1.37288245131287,
+                  103.8917038496259
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Bus 161",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "161",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "64009 \u00b7 Hougang Ctrl Int",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.39504382175966,
+                  103.9023682485853
+                ],
+                [
+                  1.39269,
+                  103.901269
+                ],
+                [
+                  1.39102885574104,
+                  103.8999866981355
+                ],
+                [
+                  1.392423,
+                  103.896122
+                ],
+                [
+                  1.392382,
+                  103.893479
+                ],
+                [
+                  1.38825138740075,
+                  103.8920895574449
+                ],
+                [
+                  1.38575273465234,
+                  103.8912152870564
+                ],
+                [
+                  1.383046111,
+                  103.889605833017
+                ],
+                [
+                  1.38133333296872,
+                  103.888214999993
+                ],
+                [
+                  1.37938472998807,
+                  103.8864030920165
+                ],
+                [
+                  1.37809338718149,
+                  103.8846802711466
+                ],
+                [
+                  1.37595638900393,
+                  103.884701388976
+                ],
+                [
+                  1.37339164793235,
+                  103.8852185485937
+                ],
+                [
+                  1.3729130421635,
+                  103.8863375074799
+                ],
+                [
+                  1.374811,
+                  103.888082
+                ],
+                [
+                  1.37634509209583,
+                  103.8905489444585
+                ],
+                [
+                  1.37447444021165,
+                  103.892894273561
+                ],
+                [
+                  1.37288245131287,
+                  103.8917038496259
+                ],
+                [
+                  1.37145414929063,
+                  103.8897657394618
+                ],
+                [
+                  1.37060695394614,
+                  103.8926680887468
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "January 2026 database",
+      "notice": "OneMap routing is not connected. Using the January 2026 database. Checked direct buses and one transfer at the same stop. Ranked by stop count; connection times are not checked. Dashed lines join stops; they are not road or walking directions. "
+    },
+    "assessment": "PARTIAL: provides routes but does not explicitly answer that duration is unavailable."
+  },
+  {
+    "case": "Direct-only request",
+    "question": "Direct bus only from Woodlands to Pasir Ris",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 1.5,
+    "reply": {
+      "answer": "No direct route was found in this filtered snapshot. This does not mean no journey exists; transfers and omitted services are not searched.",
+      "cards": [],
+      "context": {
+        "intent": "route",
+        "origin": "Woodlands",
+        "destination": "Pasir Ris"
+      },
+      "mode": "model",
+      "snapshot": "2026-01-05"
+    },
+    "map": {
+      "origin": {
+        "name": "Woodlands Int",
+        "point": [
+          1.436849,
+          103.785737
+        ]
+      },
+      "destination": {
+        "name": "Pasir Ris Int",
+        "point": [
+          1.373696,
+          103.94845
+        ]
+      },
+      "routes": [
+        {
+          "label": "Bus 168 \u2192 109",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "168",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "65199 \u00b7 Aft Punggol Rd",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.40222194447692,
+                  103.8713880555765
+                ],
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ]
+              ]
+            },
+            {
+              "mode": "BUS",
+              "service": "109",
+              "from": "65199 \u00b7 Aft Punggol Rd",
+              "to": "77039 \u00b7 Pasir Ris Stn Exit B",
+              "points": [
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ],
+                [
+                  1.3780301775267,
+                  103.9327865347595
+                ],
+                [
+                  1.37889759950996,
+                  103.9359653413393
+                ],
+                [
+                  1.37741830757924,
+                  103.9379320111752
+                ],
+                [
+                  1.37599439507295,
+                  103.939861116152
+                ],
+                [
+                  1.3744627816256,
+                  103.9418057812652
+                ],
+                [
+                  1.3737108000359,
+                  103.9435107999854
+                ],
+                [
+                  1.373014,
+                  103.945543
+                ],
+                [
+                  1.37241,
+                  103.948657
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Bus 168 \u2192 88",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "168",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "65199 \u00b7 Aft Punggol Rd",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.40222194447692,
+                  103.8713880555765
+                ],
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ]
+              ]
+            },
+            {
+              "mode": "BUS",
+              "service": "88",
+              "from": "65199 \u00b7 Aft Punggol Rd",
+              "to": "77009 \u00b7 Pasir Ris Int",
+              "points": [
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ],
+                [
+                  1.3780301775267,
+                  103.9327865347595
+                ],
+                [
+                  1.38079641020594,
+                  103.9346621770568
+                ],
+                [
+                  1.38289337444624,
+                  103.9357870042478
+                ],
+                [
+                  1.3827163599648,
+                  103.9385585573913
+                ],
+                [
+                  1.3805766269449,
+                  103.9406476680356
+                ],
+                [
+                  1.37902915784394,
+                  103.9427159123835
+                ],
+                [
+                  1.376671,
+                  103.94637
+                ],
+                [
+                  1.373696,
+                  103.94845
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Bus 168 \u2192 89",
+          "legs": [
+            {
+              "mode": "BUS",
+              "service": "168",
+              "from": "46009 \u00b7 Woodlands Int",
+              "to": "65199 \u00b7 Aft Punggol Rd",
+              "points": [
+                [
+                  1.436946,
+                  103.785936
+                ],
+                [
+                  1.43689297551872,
+                  103.7891526429174
+                ],
+                [
+                  1.43314769562187,
+                  103.7881637874308
+                ],
+                [
+                  1.4309096816047,
+                  103.7875976964213
+                ],
+                [
+                  1.40222194447692,
+                  103.8713880555765
+                ],
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ]
+              ]
+            },
+            {
+              "mode": "BUS",
+              "service": "89",
+              "from": "65199 \u00b7 Aft Punggol Rd",
+              "to": "77039 \u00b7 Pasir Ris Stn Exit B",
+              "points": [
+                [
+                  1.39591721161169,
+                  103.9054273676121
+                ],
+                [
+                  1.3780301775267,
+                  103.9327865347595
+                ],
+                [
+                  1.37889759950996,
+                  103.9359653413393
+                ],
+                [
+                  1.37741830757924,
+                  103.9379320111752
+                ],
+                [
+                  1.37599439507295,
+                  103.939861116152
+                ],
+                [
+                  1.3744627816256,
+                  103.9418057812652
+                ],
+                [
+                  1.3737108000359,
+                  103.9435107999854
+                ],
+                [
+                  1.373014,
+                  103.945543
+                ],
+                [
+                  1.37241,
+                  103.948657
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "January 2026 database",
+      "notice": "OneMap routing is not connected. Using the January 2026 database. Checked direct buses and one transfer at the same stop. Ranked by stop count; connection times are not checked. Dashed lines join stops; they are not road or walking directions. "
+    },
+    "assessment": "FAIL: returns transfers despite direct-only constraint."
+  },
+  {
+    "case": "Fare",
+    "question": "How much is the bus fare from Woodlands to Hougang?",
+    "intent_match": true,
+    "route_facts_valid": true,
+    "seconds": 0.0,
+    "reply": {
+      "answer": "This snapshot cannot confirm live arrivals, current disruptions, fares, active free boarding, nearest walking routes or fastest journeys. I can look up direct routes, stop services and recorded first/last buses.",
+      "cards": [],
+      "context": {
+        "intent": "unsupported"
+      },
+      "mode": "rules",
+      "snapshot": "2026-01-05"
+    },
+    "map": null,
+    "assessment": "PASS against January 2026 snapshot / expected limitation"
+  }
+]
