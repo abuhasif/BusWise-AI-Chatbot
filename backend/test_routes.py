@@ -51,5 +51,13 @@ class RoutesTest(unittest.TestCase):
         self.assertTrue(all(x['Stops along route']>0 for x in d['cards']))
     def test_ambiguous_direction_flagged(self):
         with connect() as c:self.assertGreater(c.execute("SELECT count(*) FROM routes WHERE service='382' AND direction=2 AND ambiguous=1").fetchone()[0],0)
+    def test_one_transfer_route(self):
+        d=answer('from sengkang interchange to hougang interchange',use_model=False)
+        self.assertTrue(d['cards'])
+        self.assertIn('one transfer',d['answer'])
+        self.assertTrue(all('Transfer at' in card and 'Continue' in card for card in d['cards']))
+    def test_direct_only_does_not_offer_transfers(self):
+        d=answer('from sengkang interchange to hougang interchange direct buses only',use_model=False)
+        self.assertFalse(d['cards'])
     def test_same_stop(self):self.assertIn('same location',answer('from 66009 to 66009',use_model=False)['answer'])
 if __name__=='__main__':unittest.main()

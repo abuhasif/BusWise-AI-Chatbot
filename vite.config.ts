@@ -34,7 +34,19 @@ const localBindingConfig = {
     : [],
 };
 
+// BUSWISE_TARGET=node builds a plain Node server (`vinext start`) for Docker.
+// The default build stays on Cloudflare Workers.
+const nodeTarget = process.env.BUSWISE_TARGET === 'node';
+
 export default defineConfig(async () => {
+  if (nodeTarget) {
+    return {
+      css: { postcss: { plugins: [tailwindcss()] } },
+      server: { host: '127.0.0.1', proxy: { '/api': 'http://127.0.0.1:8765' } },
+      plugins: [vinext()],
+    };
+  }
+
   // Keep Wrangler and Miniflare state project-local. These are non-secret tool
   // settings; application environment belongs in ignored `.env*` files.
   process.env.WRANGLER_WRITE_LOGS ??= 'false';

@@ -1,0 +1,15 @@
+# Keep build contexts small and free of secrets.
+**/node_modules
+.git
+.github
+runtime
+dist
+.next
+.vinext
+.wrangler
+docs
+data/*
+!data/bus.db
+.env*
+**/__pycache__
+**/*.log

@@ -1,0 +1,56 @@
+# Local stack: open http://localhost:8080
+#   cp .env.example .env   # then set BUSWISE_API_TOKEN (openssl rand -hex 32)
+#   docker compose up --build
+# With the local Qwen model as well (large download, needs ~8 GB RAM):
+#   docker compose --profile llm up --build
+#   docker compose exec ollama ollama pull qwen3.5:9b
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      BUSWISE_API_TOKEN: ${BUSWISE_API_TOKEN:?Set BUSWISE_API_TOKEN in .env (openssl rand -hex 32)}
+      ONEMAP_EMAIL: ${ONEMAP_EMAIL:-}
+      ONEMAP_PASSWORD: ${ONEMAP_PASSWORD:-}
+      ONEMAP_TOKEN: ${ONEMAP_TOKEN:-}
+      OLLAMA_URL: http://ollama:11434
+    expose: ["8765"]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    expose: ["3000"]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+
+  gateway:
+    build: ./gateway
+    environment:
+      API_URL: http://api:8765
+      WEB_URL: http://web:3000
+      BUSWISE_API_TOKEN: ${BUSWISE_API_TOKEN:?Set BUSWISE_API_TOKEN in .env (openssl rand -hex 32)}
+    # Bound to localhost only, so the app is not exposed to your network.
+    ports: ["127.0.0.1:8080:8080"]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    depends_on: [api, web]
+
+  ollama:
+    image: ollama/ollama:0.40.13
+    profiles: ["llm"]
+    environment:
+      OLLAMA_CONTEXT_LENGTH: "8192"
+    volumes: ["ollama:/root/.ollama"]
+
+volumes:
+  ollama:
