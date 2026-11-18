@@ -4,6 +4,8 @@
 
 Buswise is a conversational assistant for Singapore bus journeys. It combines Qwen3.5 9B for query understanding, OneMap for bus-only route planning and a bundled January 2026 SQLite snapshot for stop and timetable lookups.
 
+**Live demo: [buswise-gateway-kklq4y2keq-uc.a.run.app](https://buswise-gateway-kklq4y2keq-uc.a.run.app)**. It's hosted on Google Cloud Run and runs in limited mode, using rule-based answers without the language model. The first visit after a quiet spell takes a few seconds while the services start up.
+
 ![Buswise planning a journey from Woodlands Interchange to Hougang Interchange with live OneMap routing: the bus route is drawn along the roads on the map, with three journey options and the answer in the chat](docs/images/buswise-screenshot.png)
 
 ## What it does
