@@ -29,7 +29,8 @@
     "build/**",
     "dist/**",
     "coverage/**",
-    "next-env.d.ts"
+    "next-env.d.ts",
+    "**/node_modules/**"
   ],
   "rules": {
     "no-array-constructor": "error",
@@ -41,8 +42,13 @@
     "react/display-name": "error",
     "react/jsx-no-comment-textnodes": "error",
     "react/no-unescaped-entities": "error",
-    "react/react-compiler": "error",
     "react/require-render-return": "error",
+    "react/purity": "error",
+    "react/set-state-in-effect": "error",
+    "react/set-state-in-render": "error",
+    "react/static-components": "error",
+    "react/preserve-manual-memoization": "error",
+    "react/unsupported-syntax": "error",
     "react/rules-of-hooks": "error",
     "typescript/ban-ts-comment": "error",
     "typescript/no-deprecated": "error",
@@ -52,5 +58,13 @@
     "typescript/no-require-imports": "error",
     "typescript/no-unnecessary-type-constraint": "error",
     "typescript/no-unsafe-function-type": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*.mjs", "gateway/test/**/*.js"],
+      "rules": {
+        "typescript/no-floating-promises": "off"
+      }
+    }
+  ]
 }

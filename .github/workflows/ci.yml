@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Frontend (lint, types, React Testing Library)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - name: React Testing Library tests
+        run: npm test
+      - name: Node unit tests
+        run: npm run test:node
+      - name: Production build (Node target used by Docker)
+        run: npx vinext build
+        env:
+          BUSWISE_TARGET: node
+
+  gateway:
+    name: Gateway (Express)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gateway
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: gateway/package-lock.json
+      - run: npm ci
+      - run: npm test
+
+  backend:
+    name: Backend (Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s backend -p "test_*.py"
+
+  docker:
+    name: Docker images + stack smoke test
+    needs: [frontend, gateway, backend]
+    runs-on: ubuntu-latest
+    env:
+      BUSWISE_API_TOKEN: ci-only-token-0123456789abcdef0123456789
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and start the stack
+        run: docker compose up --build --detach --wait --wait-timeout 180 api web gateway
+      - name: Wait for the gateway to report ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:8080/readyz; then echo; exit 0; fi
+            sleep 3
+          done
+          echo "Gateway never became ready"; exit 1
+      - name: Smoke test through the gateway
+        run: |
+          curl -fsS http://localhost:8080/ | grep -q '<title>Buswise'
+          curl -fsS -X POST http://localhost:8080/api/chat \
+            -H 'Content-Type: application/json' \
+            -d '{"message":"Which buses serve stop 66009?"}' | tee /dev/stderr | grep -q 'Serangoon Int'
+      - name: Python API rejects callers without the gateway token
+        run: |
+          status=$(docker compose exec -T gateway node -e "fetch('http://api:8765/api/health').then(r=>console.log(r.status))")
+          test "$status" = "403"
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs
+      - name: Stop the stack
+        if: always()
+        run: docker compose down

@@ -50,3 +50,9 @@ runtime/
 backend/__pycache__/
 docs/evaluation/*results.json
 *.log
+
+# Gateway dependencies
+gateway/node_modules/
+
+# TypeScript incremental build cache
+*.tsbuildinfo

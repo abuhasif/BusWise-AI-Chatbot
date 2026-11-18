@@ -1,15 +1,56 @@
 """Server-only OneMap adapter. Never expose credentials or upstream error bodies."""
-import json, os, math, urllib.request, urllib.parse, urllib.error
+import base64, json, os, math, threading, time, urllib.request, urllib.parse, urllib.error
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
 TOKEN_FILE=Path(__file__).resolve().parents[1]/'data/onemap-token.txt'
 class Unavailable(Exception):pass
 
-def token():
-    return os.environ.get('ONEMAP_TOKEN','').strip() or (TOKEN_FILE.read_text().strip() if TOKEN_FILE.exists() else '')
+AUTH_URL='https://www.onemap.gov.sg/api/auth/post/getToken'
+# OneMap tokens last 3 days. Renew this long before expiry so requests never race it.
+RENEW_BEFORE=6*3600
+_cache={'token':'','expires':0.0};_lock=threading.Lock()
 
-def request(path,params):
+def credentials():
+    return os.environ.get('ONEMAP_EMAIL','').strip(),os.environ.get('ONEMAP_PASSWORD','')
+
+def expiry(jwt):
+    """Unix expiry from a token's payload (not verified; only used to decide when to renew)."""
+    try:
+        part=jwt.split('.')[1];payload=json.loads(base64.urlsafe_b64decode(part+'='*(-len(part)%4)))
+        return float(payload['exp'])
+    except (IndexError,KeyError,TypeError,ValueError):return 0.0
+
+def sign_in():
+    """Exchange ONEMAP_EMAIL/ONEMAP_PASSWORD for a fresh token. Never logs or returns the password."""
+    email,password=credentials()
+    req=urllib.request.Request(AUTH_URL,data=json.dumps({'email':email,'password':password}).encode(),headers={'Content-Type':'application/json'},method='POST')
+    try:
+        with urllib.request.urlopen(req,timeout=15) as response:data=json.load(response)
+    except urllib.error.HTTPError:raise Unavailable('OneMap sign-in failed. Check ONEMAP_EMAIL and ONEMAP_PASSWORD.') from None
+    except (OSError,ValueError):raise Unavailable('OneMap could not be reached. Try again shortly.') from None
+    key=data.get('access_token') if isinstance(data,dict) else None
+    if not isinstance(key,str) or not key:raise Unavailable('OneMap sign-in failed. Check ONEMAP_EMAIL and ONEMAP_PASSWORD.')
+    try:expires=float(data.get('expiry_timestamp') or 0)
+    except (TypeError,ValueError):expires=0.0
+    return key,expires or expiry(key) or time.time()+3*86400
+
+def token(refresh=False):
+    """Credentials renew automatically; otherwise use ONEMAP_TOKEN or data/onemap-token.txt."""
+    email,password=credentials()
+    if email and password:
+        with _lock:
+            if refresh or not _cache['token'] or time.time()>_cache['expires']-RENEW_BEFORE:
+                _cache['token'],_cache['expires']=sign_in()
+            return _cache['token']
+    key=os.environ.get('ONEMAP_TOKEN','').strip() or (TOKEN_FILE.read_text().strip() if TOKEN_FILE.exists() else '')
+    expires=expiry(key) if key else 0.0
+    if expires and expires<time.time():
+        when=datetime.fromtimestamp(expires,timezone(timedelta(hours=8)))
+        raise Unavailable(f'The OneMap token expired on {when.day} {when:%B %Y}. Set ONEMAP_EMAIL and ONEMAP_PASSWORD so it renews automatically.')
+    return key
+
+def request(path,params,retry=True):
     key=token()
     if not key:raise Unavailable('OneMap routing is not connected. Using the January 2026 database.')
     req=urllib.request.Request('https://www.onemap.gov.sg/api/'+path+'?'+urllib.parse.urlencode(params),headers={'Authorization':key})
@@ -18,7 +59,11 @@ def request(path,params):
         if not isinstance(data,dict) or data.get('error'):raise Unavailable('OneMap could not complete this request.')
         return data
     except urllib.error.HTTPError as error:
-        if error.code in (401,403):raise Unavailable('OneMap token is invalid or expired. Update the local token file.') from None
+        if error.code in (401,403):
+            # A rejected token is renewed once when credentials are configured.
+            if retry and all(credentials()):
+                token(refresh=True);return request(path,params,retry=False)
+            raise Unavailable('OneMap token is invalid or expired. Set ONEMAP_EMAIL and ONEMAP_PASSWORD so it renews automatically.') from None
         if error.code==404:raise Unavailable('OneMap found no bus journey between these points.') from None
         raise Unavailable('OneMap is unavailable or its request limit was reached.') from None
     except (OSError,ValueError):raise Unavailable('OneMap could not be reached. Try again shortly.') from None

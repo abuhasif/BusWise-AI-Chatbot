@@ -1,10 +1,15 @@
 """Local conversational intent extraction + deterministic SQLite answers."""
-import json, math, re, sqlite3, urllib.request, urllib.error
+import hmac, ipaddress, json, math, os, re, sqlite3, urllib.request, urllib.error
 import onemap
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 DB=Path(__file__).resolve().parents[1]/'data/bus.db'
 MODEL='qwen3.5:9b'
+HOST=os.environ.get('BUSWISE_HOST','127.0.0.1')
+# BUSWISE_API_TOKEN is the shared secret the gateway sends; BUSWISE_MOBILE_TOKEN pairs the Android debug app.
+MOBILE_TOKEN=(os.environ.get('BUSWISE_API_TOKEN','') or os.environ.get('BUSWISE_MOBILE_TOKEN','')).strip()
+OLLAMA_URL=os.environ.get('OLLAMA_URL','http://127.0.0.1:11434').rstrip('/')
+PORT=int(os.environ.get('PORT','8765'))
 def connect():
     c=sqlite3.connect(f'{DB.as_uri()}?mode=ro',uri=True);c.row_factory=sqlite3.Row;return c
 def clean(value):return re.sub(r'[^a-z0-9 ]','',str(value).lower()).strip()
@@ -149,7 +154,7 @@ def interpret(message,context,use_model=True):
         prompt='Extract a bus query as JSON. Never answer it or invent route facts. intent must be route, stop, times, service, or unknown. route uses origin and destination (station names or five digit stop codes); stop uses stop; times uses stop, service and day (wd/sat/sun); service lists stops for service. Preserve identifiers exactly. For follow-ups use context. Do not invent missing locations. Return only fields supported by the user/context.'
         body={'model':MODEL,'stream':False,'think':False,'format':schema,'options':{'temperature':0,'num_predict':512,'num_ctx':4096},'messages':[{'role':'system','content':prompt},{'role':'user','content':json.dumps({'question':message,'context':context})}]}
         try:
-            request=urllib.request.Request('http://127.0.0.1:11434/api/chat',data=json.dumps(body).encode(),headers={'Content-Type':'application/json'})
+            request=urllib.request.Request(OLLAMA_URL+'/api/chat',data=json.dumps(body).encode(),headers={'Content-Type':'application/json'})
             with urllib.request.urlopen(request,timeout=45) as response:d=json.loads(response.read())
             parsed=json.loads(d['message']['content']);parsed={k:v[:120] for k,v in parsed.items() if k in schema['properties'] and isinstance(v,str)}
             # Explicit deterministic inputs take precedence over model interpretation.
@@ -162,7 +167,20 @@ def answer(message,context=None,use_model=True):
     context={k:v[:120] for k,v in context.items() if k in ('intent','origin','destination','stop','service','day','direct_only','less_walking','departure') and isinstance(v,str)}
     p,mode=interpret(message,context,use_model);kind=p.get('intent');cards=[]
     with connect() as c:
-        if kind=='route':cards,text=direct(c,p.get('origin'),p.get('destination'))
+        if kind=='route':
+            cards,text=direct(c,p.get('origin'),p.get('destination'))
+            if not cards and p.get('direct_only')!='true':
+                transfers=transfer_routes(c,p.get('origin'),p.get('destination'))
+                for route in transfers:
+                    first,second=route['legs']
+                    cards.append({
+                        'Journey':route['label'],
+                        'Board':first['from'],
+                        'Transfer at':first['to'],
+                        'Continue':f"Bus {second['service']} to {second['to']}"
+                    })
+                if cards:
+                    text=f"Found {len(cards)} option(s) with one transfer at the same recorded bus stop. Connection times and walking between separate stops are not checked."
         elif kind=='stop':
             codes=resolve(c,p.get('stop'),'board')
             if not codes:text='Which bus stop? Give a five-digit stop code, such as 66009.'
@@ -278,20 +296,28 @@ def map_journey(origin,destination,options=None):
         if not routes and options.get('direct_only')!='true':routes=transfer_routes(c,start_term,end_term)
         return {'origin':a,'destination':b,'routes':routes,'source':'January 2026 database','notice':notice+(' Requested departure time and walking preference cannot be verified in the fallback. ' if options.get('departure') or options.get('less_walking')=='true' else '')+(' Checked direct buses only.' if options.get('direct_only')=='true' else ' Checked direct buses and one transfer at the same stop.')+' Ranked by stop count; connection times are not checked. Dashed lines join stops; they are not road or walking directions. '+('' if routes else 'No matching journey found. Routes with more transfers or omitted services may exist.')}
 
+def request_allowed(client_ip, provided_token):
+    """Allow loopback clients or explicitly paired mobile clients only."""
+    try:
+        if ipaddress.ip_address(client_ip).is_loopback:return True
+    except ValueError:
+        return False
+    return bool(MOBILE_TOKEN) and bool(provided_token) and hmac.compare_digest(provided_token,MOBILE_TOKEN)
+
 class Handler(BaseHTTPRequestHandler):
+    # Don't advertise the Python version, and drop idle or slow clients.
+    server_version='Buswise';sys_version='';timeout=15
     def allowed(self):
-        host=self.headers.get('Host','').split(':')[0]
-        origin=self.headers.get('Origin')
-        return host in ('localhost','127.0.0.1') and (origin is None or origin in ('http://localhost:3000','http://127.0.0.1:3000'))
+        return request_allowed(self.client_address[0],self.headers.get('X-Buswise-Token',''))
     def reply(self,status,data):
-        payload=json.dumps(data).encode();self.send_response(status);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(payload)));self.end_headers();self.wfile.write(payload)
+        payload=json.dumps(data).encode();self.send_response(status);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(payload)));self.send_header('X-Content-Type-Options','nosniff');self.send_header('Cache-Control','no-store');self.send_header('Connection','close');self.end_headers();self.wfile.write(payload);self.close_connection=True
     def do_GET(self):
         if not self.allowed():return self.reply(403,{'error':'Local access only'})
         if self.path=='/api/map/stops':return self.reply(200,map_stops())
         if self.path!='/api/health':return self.reply(404,{'error':'Not found'})
         available=False
         try:
-            with urllib.request.urlopen('http://127.0.0.1:11434/api/tags',timeout=2) as r:available=any(m['name']==MODEL for m in json.loads(r.read())['models'])
+            with urllib.request.urlopen(OLLAMA_URL+'/api/tags',timeout=2) as r:available=any(m['name']==MODEL for m in json.loads(r.read())['models'])
         except (OSError,ValueError):pass
         self.reply(200,{'model_available':available,'model':MODEL,'database_available':DB.exists(),'snapshot':'2026-01-05'})
     def do_POST(self):
@@ -313,4 +339,6 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError,TypeError):self.reply(400,{'error':'Invalid JSON request'})
         except Exception:self.reply(500,{'error':'Could not complete the database query'})
 if __name__=='__main__':
-    print('Buswise API listening at http://127.0.0.1:8765',flush=True);ThreadingHTTPServer(('127.0.0.1',8765),Handler).serve_forever()
+    if MOBILE_TOKEN and len(MOBILE_TOKEN)<32:raise SystemExit('BUSWISE_API_TOKEN / BUSWISE_MOBILE_TOKEN must be at least 32 characters.')
+    print(f'Buswise API listening at http://{HOST}:{PORT}',flush=True);ThreadingHTTPServer((HOST,PORT),Handler).serve_forever()
+

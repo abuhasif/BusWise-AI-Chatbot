@@ -1,0 +1,72 @@
+name: Deploy to Google Cloud Run
+
+# Manual deploy. Free within Cloud Run's always-free allowance for a low-traffic demo
+# (services scale to zero). One-time setup is in docs/deploy.md.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # for Workload Identity Federation (no long-lived keys)
+
+env:
+  PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  REGION: ${{ vars.GCP_REGION || 'us-central1' }}
+  REPO: buswise
+  TAG: ${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push images to Artifact Registry
+        run: |
+          REGISTRY="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO"
+          echo "REGISTRY=$REGISTRY" >> "$GITHUB_ENV"
+          gcloud auth configure-docker "$REGION-docker.pkg.dev" --quiet
+          docker build -f backend/Dockerfile -t "$REGISTRY/api:$TAG" .
+          docker build -f Dockerfile.web -t "$REGISTRY/web:$TAG" .
+          docker build -t "$REGISTRY/gateway:$TAG" gateway
+          for image in api web gateway; do docker push "$REGISTRY/$image:$TAG"; done
+
+      - name: Deploy API and web
+        env:
+          BUSWISE_API_TOKEN: ${{ secrets.BUSWISE_API_TOKEN }}
+          ONEMAP_EMAIL: ${{ secrets.ONEMAP_EMAIL }}
+          ONEMAP_PASSWORD: ${{ secrets.ONEMAP_PASSWORD }}
+        run: |
+          common="--region=$REGION --platform=managed --min-instances=0 --max-instances=2 --memory=512Mi --cpu=1 --allow-unauthenticated --quiet"
+          # The API is reachable on the internet but refuses any request without the gateway token.
+          # Secrets go through a JSON env-vars file (JSON is valid YAML), so any character
+          # in an email or password is passed through safely.
+          ENV_FILE="$RUNNER_TEMP/api-env.yaml"
+          python3 -c 'import json,os;print(json.dumps({k:os.environ.get(k,"") for k in ["BUSWISE_API_TOKEN","ONEMAP_EMAIL","ONEMAP_PASSWORD"]}))' > "$ENV_FILE"
+          gcloud run deploy buswise-api --image="$REGISTRY/api:$TAG" --port=8765 $common --env-vars-file="$ENV_FILE"
+          rm -f "$ENV_FILE"
+          gcloud run deploy buswise-web --image="$REGISTRY/web:$TAG" --port=3000 $common
+
+      - name: Deploy gateway
+        env:
+          BUSWISE_API_TOKEN: ${{ secrets.BUSWISE_API_TOKEN }}
+        run: |
+          API_URL=$(gcloud run services describe buswise-api --region="$REGION" --format='value(status.url)')
+          WEB_URL=$(gcloud run services describe buswise-web --region="$REGION" --format='value(status.url)')
+          ENV_FILE="$RUNNER_TEMP/gateway-env.yaml"
+          API_URL="$API_URL" WEB_URL="$WEB_URL" TRUST_PROXY=1 python3 -c 'import json,os;print(json.dumps({k:os.environ.get(k,"") for k in ["API_URL","WEB_URL","BUSWISE_API_TOKEN","TRUST_PROXY"]}))' > "$ENV_FILE"
+          gcloud run deploy buswise-gateway --image="$REGISTRY/gateway:$TAG" --port=8080 \
+            --region="$REGION" --platform=managed --min-instances=0 --max-instances=2 \
+            --memory=256Mi --cpu=1 --allow-unauthenticated --quiet \
+            --env-vars-file="$ENV_FILE"
+          rm -f "$ENV_FILE"
+          URL=$(gcloud run services describe buswise-gateway --region="$REGION" --format='value(status.url)')
+          echo "### Buswise is live at $URL" >> "$GITHUB_STEP_SUMMARY"
+          curl -fsS "$URL/readyz" || true
