@@ -4,14 +4,14 @@
 
 Buswise is a conversational assistant for Singapore bus journeys. It combines Qwen3.5 9B for query understanding, OneMap for bus-only route planning and a bundled January 2026 SQLite snapshot for stop and timetable lookups.
 
-**Live demo: [buswise-gateway-kklq4y2keq-uc.a.run.app](https://buswise-gateway-kklq4y2keq-uc.a.run.app)**. It's hosted on Google Cloud Run and runs in limited mode, using rule-based answers without the language model. The first visit after a quiet spell takes a few seconds while the services start up.
+**Live demo: [buswise-gateway-kklq4y2keq-uc.a.run.app](https://buswise-gateway-kklq4y2keq-uc.a.run.app)**. It's hosted on Google Cloud Run. Journey searches (for example "From Woodlands Int to Hougang Int", or the map's **Find buses**) use live OneMap routing. Stop, service and first/last-bus questions are answered from the January 2026 snapshot. The demo runs in limited mode, using rule-based answers without the language model, so a route question needs the "from … to …" form. The first visit after a quiet spell takes a few seconds while the services start up.
 
 ![Buswise planning a journey from Woodlands Interchange to Hougang Interchange with live OneMap routing: the bus route is drawn along the roads on the map, with three journey options and the answer in the chat](docs/images/buswise-screenshot.png)
 
 ## What it does
 
-- Plans bus-only journeys with walking access and transfers through OneMap
-- Answers direct-route, stop-service and first/last-bus questions from the local snapshot
+- Plans bus-only journeys with walking access and transfers through OneMap, and falls back to the snapshot, clearly labelled, if OneMap is unavailable
+- Answers stop-service, service-route and first/last-bus questions from the local snapshot
 - Keeps route context for follow-ups such as “what about Sunday?” and “where do I change?”
 - Shows routes, stops and location-selected start points on an interactive map
 
@@ -76,9 +76,11 @@ Settings live in `.env`, which is git-ignored. `BUSWISE_API_TOKEN` is required: 
 
 ## Security
 
-- **One public entry point:** only the gateway is reachable. The API and web containers have no published ports.
+- **One public entry point:** only the gateway can be reached from the internet.
+  - **Docker Compose:** the API and web containers publish no ports, and the gateway's port is bound to localhost.
+  - **Cloud Run:** the API and web services use internal-only ingress. Google rejects internet requests to their URLs (404) before they reach a container. The gateway reaches them through the project's VPC (Direct VPC egress plus Private Google Access).
 - **Service authentication:** the gateway adds a shared token (32+ characters, compared in constant time) to every API call. The API refuses non-local callers without it, and a token sent by a client is discarded.
-- **Rate limits** (per IP, per minute): 300 requests overall, 60 to `/api`, and 20 to `/api/chat`. Forwarded IP headers are only trusted when `TRUST_PROXY` is set.
+- **Rate limits** (per IP, per minute): 300 requests overall, 60 to `/api`, and 20 to `/api/chat`. Forwarded IP headers are only trusted when `TRUST_PROXY` is set. Counts are kept in memory by each gateway instance, so on Cloud Run (up to 2 instances) the effective limit can be up to twice as high.
 - **Security headers:**
   - A strict Content-Security-Policy with a fresh script nonce per response, no inline scripts and no framing.
   - HSTS, `nosniff`, a referrer policy and a Permissions-Policy.
@@ -96,7 +98,7 @@ Settings live in `.env`, which is git-ignored. `BUSWISE_API_TOKEN` is required: 
 
 ## Deploy
 
-See [`docs/deploy.md`](docs/deploy.md). It covers a **free** Google Cloud Run deployment (a one-click GitHub Actions workflow is included), Render's free tier, and AWS ECS Express Mode. AWS App Runner no longer accepts new customers.
+The live demo runs on **Google Cloud Run**, deployed by a GitHub Actions workflow. [`docs/deploy.md`](docs/deploy.md) has the setup steps, plus notes on Render's free tier and on AWS ECS Express Mode. The AWS notes are untested; AWS App Runner no longer accepts new customers.
 
 ## Run locally without Docker (Windows)
 
@@ -147,6 +149,7 @@ tests/react/        React Testing Library component tests (Vitest + jsdom)
 tests/*.test.mjs    Node unit tests for frontend logic
 Dockerfile.web      Web app image
 docker-compose.yml  Full local stack
+scripts/            One-time Cloud Run project setup
 .github/workflows/  CI and Cloud Run deployment
 ```
 

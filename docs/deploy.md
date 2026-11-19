@@ -16,51 +16,48 @@ Check each provider's current pricing page before relying on these figures.
 
 The [`Deploy to Google Cloud Run`](../.github/workflows/deploy-cloudrun.yml) workflow builds the three images, pushes them to Artifact Registry and deploys them. It authenticates through Workload Identity Federation, so no JSON key is stored in GitHub.
 
+### How the services are exposed
+
+| Service | Ingress | Reaches |
+| --- | --- | --- |
+| `buswise-gateway` | Public (HTTPS) | API and web, through the default VPC (Direct VPC egress, all traffic) |
+| `buswise-api` | **Internal only** | OneMap, over the internet |
+| `buswise-web` | **Internal only** | Nothing |
+
+Google answers internet requests to the API's and web's own URLs with a 404, before they reach a container. Only traffic from inside the project's VPC, which means the gateway, gets through. The API also still requires the gateway's shared token, as a second layer. Direct VPC egress has no extra charge.
+
+A first deploy can take about 2 minutes before the gateway's VPC traffic counts as internal. Until then `/readyz` reports the upstreams as `http 404`.
+
 ### One-time setup
 
+[`scripts/cloudrun-setup.sh`](../scripts/cloudrun-setup.sh) does everything, and is safe to re-run:
+
+- enables the APIs
+- creates the image repository, with a cleanup rule that keeps the 2 newest images (within the free 0.5 GB)
+- turns on Private Google Access for the VPC subnet
+- creates the deploy service account
+- sets up Workload Identity Federation, so it trusts only this repository's GitHub Actions
+
 ```bash
-PROJECT_ID=your-project-id
-REGION=us-central1
-REPO_SLUG=abuhasif/BusWise-AI-Chatbot
-PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')
-
-gcloud config set project "$PROJECT_ID"
-gcloud services enable run.googleapis.com artifactregistry.googleapis.com iamcredentials.googleapis.com
-
-gcloud artifacts repositories create buswise --repository-format=docker --location="$REGION"
-
-# Service account that GitHub Actions will impersonate
-gcloud iam service-accounts create github-deployer
-SA="github-deployer@$PROJECT_ID.iam.gserviceaccount.com"
-for role in roles/run.admin roles/artifactregistry.writer roles/iam.serviceAccountUser; do
-  gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$SA" --role="$role"
-done
-
-# Trust GitHub's OIDC tokens for this repository only
-gcloud iam workload-identity-pools create github --location=global
-gcloud iam workload-identity-pools providers create-oidc github \
-  --location=global --workload-identity-pool=github \
-  --issuer-uri=https://token.actions.githubusercontent.com \
-  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
-  --attribute-condition="assertion.repository=='$REPO_SLUG'"
-gcloud iam service-accounts add-iam-policy-binding "$SA" \
-  --role=roles/iam.workloadIdentityUser \
-  --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github/attribute.repository/$REPO_SLUG"
-
-echo "GCP_WORKLOAD_IDENTITY_PROVIDER=projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github/providers/github"
-echo "GCP_SERVICE_ACCOUNT=$SA"
+gcloud auth login
+bash scripts/cloudrun-setup.sh YOUR_PROJECT_ID   # needs billing enabled on the project
 ```
+
+It prints the values for the next step.
 
 In GitHub, open **Settings → Secrets and variables → Actions** and add:
 
 - Variables: `GCP_PROJECT_ID`, and optionally `GCP_REGION` (defaults to `us-central1`)
-- Secrets: `GCP_WORKLOAD_IDENTITY_PROVIDER` and `GCP_SERVICE_ACCOUNT` (printed above), `BUSWISE_API_TOKEN` (any random string of 32+ characters, for example `openssl rand -hex 32`), and optionally `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` (your OneMap account, for live routing)
+- Secrets: `GCP_WORKLOAD_IDENTITY_PROVIDER` and `GCP_SERVICE_ACCOUNT` (printed by the script), `BUSWISE_API_TOKEN` (any random string of 32+ characters, for example `openssl rand -hex 32`), and optionally `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` (your OneMap account, for live routing)
 
 Then run **Actions → Deploy to Google Cloud Run → Run workflow**. The job summary prints the public gateway URL.
 
 To keep costs at zero, set a [budget alert](https://cloud.google.com/billing/docs/how-to/budgets) on the billing account. The workflow caps each service at two instances.
 
 ## AWS (ECS Express Mode)
+
+These steps are a starting point and haven't been tested. The live demo runs on Cloud Run.
+
 
 1. Push the three images to Amazon ECR:
 
