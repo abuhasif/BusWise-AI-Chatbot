@@ -44,8 +44,10 @@ jobs:
           ONEMAP_EMAIL: ${{ secrets.ONEMAP_EMAIL }}
           ONEMAP_PASSWORD: ${{ secrets.ONEMAP_PASSWORD }}
         run: |
-          common="--region=$REGION --platform=managed --min-instances=0 --max-instances=2 --memory=512Mi --cpu=1 --allow-unauthenticated --quiet"
-          # The API is reachable on the internet but refuses any request without the gateway token.
+          # API and web are internal-only: Google refuses any request that doesn't come from
+          # inside the project's VPC (the gateway), before it reaches the container.
+          # The API also still requires the gateway's shared token.
+          common="--region=$REGION --platform=managed --min-instances=0 --max-instances=2 --memory=512Mi --cpu=1 --ingress=internal --allow-unauthenticated --quiet"
           # Secrets go through a JSON env-vars file (JSON is valid YAML), so any character
           # in an email or password is passed through safely.
           ENV_FILE="$RUNNER_TEMP/api-env.yaml"
@@ -65,8 +67,11 @@ jobs:
           gcloud run deploy buswise-gateway --image="$REGISTRY/gateway:$TAG" --port=8080 \
             --region="$REGION" --platform=managed --min-instances=0 --max-instances=2 \
             --memory=256Mi --cpu=1 --allow-unauthenticated --quiet \
+            --network=default --subnet=default --vpc-egress=all-traffic \
             --env-vars-file="$ENV_FILE"
           rm -f "$ENV_FILE"
           URL=$(gcloud run services describe buswise-gateway --region="$REGION" --format='value(status.url)')
           echo "### Buswise is live at $URL" >> "$GITHUB_STEP_SUMMARY"
-          curl -fsS "$URL/readyz" || true
+          # A brand-new VPC route can take a couple of minutes to count as internal.
+          for i in $(seq 1 12); do curl -fsS "$URL/readyz" && exit 0; sleep 15; done
+          echo "::warning::Gateway not ready yet; check $URL/readyz in a few minutes."
